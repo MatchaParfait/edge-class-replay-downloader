@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>课堂回放下载管理</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <div><h1>课堂回放</h1><span class="app-subtitle">下载管理</span></div>
+      <nav>
+        <button id="open-manager" hidden class="icon-button" title="打开独立管理页" aria-label="打开独立管理页"><i data-lucide="external-link" aria-hidden="true"></i></button>
+        <button id="download-settings" class="icon-button" title="Edge 下载设置" aria-label="Edge 下载设置"><i data-lucide="settings" aria-hidden="true"></i></button>
+        <button id="browser-downloads" class="icon-button" title="浏览器下载记录" aria-label="浏览器下载记录"><i data-lucide="folder-down" aria-hidden="true"></i></button>
+        <button id="close-panel" hidden class="icon-button" title="收起浮窗" aria-label="收起浮窗"><i data-lucide="panel-right-close" aria-hidden="true"></i></button>
+      </nav>
+    </header>
+    <main>
+      <section class="source-bar" aria-label="课程来源">
+        <label class="source-label" for="source-tab">课程页面</label>
+        <select id="source-tab"><option value="">未找到课堂页面</option></select>
+        <button id="refresh-tabs" class="icon-button" title="刷新页面列表" aria-label="刷新页面列表"><i data-lucide="refresh-cw" aria-hidden="true"></i></button>
+        <button id="scan" class="primary"><i data-lucide="scan-search" aria-hidden="true"></i><span id="scan-label">扫描当前课程</span></button>
+        <button id="stop-scan" hidden>停止扫描</button>
+      </section>
+      <p id="source-status" role="status">正在读取课程页面</p>
+      <section class="course-heading">
+        <div><h2 id="course-name">尚未扫描课程</h2><p id="scan-status" role="status">等待扫描</p></div>
+        <button id="retry-scan" hidden><i data-lucide="rotate-cw" aria-hidden="true"></i>重试提取失败项</button>
+      </section>
+      <progress id="scan-progress" max="1" value="0" hidden aria-label="扫描进度"></progress>
+      <section class="filters" aria-label="录像筛选">
+        <fieldset class="views"><legend>下载视角</legend>
+          <label><input id="view-courseware" type="checkbox" checked>课件</label>
+          <label><input id="view-teacher" type="checkbox">教师</label>
+        </fieldset>
+        <label class="filter-label">周次<select id="week-filter"><option value="">全部周次</option></select></label>
+        <label class="search"><i data-lucide="search" aria-hidden="true"></i><input id="search" type="search" placeholder="日期或课程名称" aria-label="搜索录像"></label>
+        <button id="export" title="导出选中文件的真实链接"><i data-lucide="file-down" aria-hidden="true"></i>导出链接</button>
+      </section>
+      <section class="recordings" aria-label="课程录像">
+        <div class="selection-bar"><label><input id="select-all" type="checkbox" aria-label="选择全部筛选结果">全选当前结果</label><span id="selection-count">0 节课</span></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th class="check-column"></th><th>课程录像</th><th>周次</th><th>课件</th><th>教师</th><th>提取状态</th></tr></thead>
+            <tbody id="records"></tbody>
+          </table>
+        </div>
+        <div id="empty" class="empty">暂无录像</div>
+      </section>
+      <section class="download-bar">
+        <div><strong id="selected-files">0 个文件</strong><span id="selected-size">0 B</span></div>
+        <label>同时下载<select id="concurrency"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></label>
+        <button id="download" class="primary" disabled><i data-lucide="download" aria-hidden="true"></i>下载选中项</button>
+      </section>
+      <section class="queue-section" aria-label="下载队列">
+        <div class="queue-heading">
+          <h2>下载队列 <span id="queue-count">0</span></h2>
+          <div class="queue-actions">
+            <button id="pause-queue"><i data-lucide="pause" aria-hidden="true"></i><span>暂停排队</span></button>
+            <button id="retry-downloads" disabled><i data-lucide="rotate-cw" aria-hidden="true"></i>重试失败</button>
+            <button id="clear-waiting" disabled class="icon-button" title="移除等待中的任务，不影响正在下载的文件" aria-label="移除等待中的任务"><i data-lucide="list-minus" aria-hidden="true"></i></button>
+            <button id="clear-finished" disabled class="icon-button" title="清除已完成记录" aria-label="清除已完成记录"><i data-lucide="list-x" aria-hidden="true"></i></button>
+          </div>
+        </div>
+        <p id="queue-summary">暂无下载任务</p>
+        <ul id="tasks"></ul>
+      </section>
+      <p id="notice" role="status" aria-live="polite"></p>
+    </main>
+    <script src="vendor/lucide.min.js"></script>
+    <script src="core.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

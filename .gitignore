@@ -1,0 +1,30 @@
+# Local secrets and browser state
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*edge-profile*/
+*browser-profile*/
+User Data/
+
+# Downloaded media and incomplete downloads
+*.mp4
+*.mkv
+*.webm
+*.crdownload
+*.part
+
+# Dependencies and generated verification output
+node_modules/
+playwright-report/
+test-results/
+*-qa/
+coverage/
+*.log
+
+# Local editor and operating-system files
+.idea/
+.vscode/
+Thumbs.db
+.DS_Store
