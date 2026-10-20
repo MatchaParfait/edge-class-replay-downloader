@@ -1,6 +1,6 @@
 (() => {
   const KEY = "__classReplayFloatingPanel";
-  const VERSION = "2.2.1";
+  const VERSION = "2.2.2";
   if (globalThis[KEY]?.version === VERSION) return;
   globalThis[KEY]?.dispose();
   document.getElementById("class-replay-downloader-root")?.remove();
@@ -45,8 +45,8 @@
   const launcher = document.createElement("button");
   launcher.id = "launcher";
   launcher.type = "button";
-  launcher.title = "课堂回放下载";
-  launcher.setAttribute("aria-label", "展开课堂回放下载");
+  launcher.title = "CUMT课堂回放批量下载";
+  launcher.setAttribute("aria-label", "展开CUMT课堂回放批量下载");
   launcher.setAttribute("aria-expanded", "false");
   launcher.setAttribute("aria-controls", "drawer");
   launcher.append(lucide.createElement(lucide.icons.Download, { "aria-hidden": "true" }));
@@ -54,7 +54,7 @@
   drawer.id = "drawer";
   drawer.hidden = true;
   drawer.setAttribute("role", "dialog");
-  drawer.setAttribute("aria-label", "课堂回放下载");
+  drawer.setAttribute("aria-label", "CUMT课堂回放批量下载");
   shadow.append(style, launcher, drawer);
   document.documentElement.append(host);
   let iframe;
@@ -78,7 +78,7 @@
       channel = Array.from(crypto.getRandomValues(new Uint8Array(16)),
         (byte) => byte.toString(16).padStart(2, "0")).join("");
       iframe = document.createElement("iframe");
-      iframe.title = "课堂回放下载管理";
+      iframe.title = "CUMT课堂回放批量下载";
       iframe.src = chrome.runtime.getURL(`popup.html?embedded=1&channel=${channel}`);
       iframe.referrerPolicy = "no-referrer";
       drawer.append(iframe);

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Class Replay Downloader",
-  "version": "2.2.1",
-  "description": "Download authorized replays by teacher or courseware view using actual recording files.",
+  "name": "CUMT课堂回放批量下载",
+  "version": "2.2.2",
+  "description": "用于中国矿业大学云课堂，支持课件与教师视角选择，批量下载当前账户有权访问的课堂回放。",
   "minimum_chrome_version": "120",
   "permissions": ["activeTab", "downloads", "storage", "scripting", "alarms"],
   "host_permissions": ["http://class.cumt.edu.cn/*", "https://class.cumt.edu.cn/*"],
@@ -10,7 +10,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "展开或收起课堂回放下载"
+    "default_title": "展开或收起CUMT课堂回放批量下载"
   },
   "content_scripts": [{
     "matches": ["http://class.cumt.edu.cn/*", "https://class.cumt.edu.cn/*"],
