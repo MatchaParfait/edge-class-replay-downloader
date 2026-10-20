@@ -17,6 +17,7 @@ User Data/
 
 # Dependencies and generated verification output
 node_modules/
+dist/
 playwright-report/
 test-results/
 *-qa/

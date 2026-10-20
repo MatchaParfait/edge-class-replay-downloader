@@ -17,6 +17,13 @@
       </nav>
     </header>
     <main>
+      <section id="update-banner" class="update-banner" hidden aria-label="发现插件更新">
+        <strong id="update-title"></strong>
+        <div class="update-actions">
+          <button id="download-update" class="primary"><i data-lucide="download" aria-hidden="true"></i>下载新版</button>
+          <button id="release-notes" class="icon-button" title="更新说明" aria-label="打开更新说明"><i data-lucide="external-link" aria-hidden="true"></i></button>
+        </div>
+      </section>
       <section class="source-bar" aria-label="课程来源">
         <label class="source-label" for="source-tab">课程页面</label>
         <select id="source-tab"><option value="">未找到课堂页面</option></select>
@@ -68,6 +75,11 @@
         <ul id="tasks"></ul>
       </section>
       <p id="notice" role="status" aria-live="polite"></p>
+      <footer class="update-footer" aria-label="插件版本与更新">
+        <span id="current-version"></span>
+        <span id="update-status" role="status" aria-live="polite">尚未检查更新</span>
+        <button id="check-updates"><i data-lucide="refresh-cw" aria-hidden="true"></i><span>检查更新</span></button>
+      </footer>
     </main>
     <script src="vendor/lucide.min.js"></script>
     <script src="core.js"></script>

@@ -1,7 +1,8 @@
-importScripts("core.js", "page-bridge.js");
+importScripts("core.js", "page-bridge.js", "updates.js");
 
 const STATE_KEY = "classReplayV2";
 const ALARM = "class-replay-recovery";
+const updates = ReplayUpdates.create(chrome);
 let cache;
 let loading;
 let serial = Promise.resolve();
@@ -325,7 +326,7 @@ async function installPanel(tabId, force = false) {
   if (!force) {
     try {
       const ready = await chrome.tabs.sendMessage(tabId, { type: "class-replay-panel-ready" });
-      if (ready?.version === "2.2.1") return;
+      if (ready?.version === chrome.runtime.getManifest().version) return;
     } catch {}
   }
   await chrome.scripting.executeScript({
@@ -366,12 +367,15 @@ chrome.downloads.onChanged.addListener((delta) => {
 });
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === ALARM) void recover().catch(console.error);
+  if (alarm.name === updates.alarm) void updates.check().catch(console.error);
 });
 chrome.runtime.onStartup.addListener(() => {
   void ensureAlarm().then(recover).catch(console.error);
+  void updates.start().catch(console.error);
 });
 chrome.runtime.onInstalled.addListener(() => {
   void ensureAlarm(); void installExistingPanels().catch(console.error);
+  void updates.start().catch(console.error);
 });
 async function recover() {
   if (!pumping) await recoverStarting();
@@ -416,8 +420,11 @@ async function handle(message, sender) {
       void pump().catch(console.error); resumeScans(s);
       const c = message.tabId ? catalog(s, message.tabId) : s;
       return { ok: true, state: structuredClone({ ...s,
-        course: c.course, records: c.records, scan: c.scan, catalogs: undefined }) };
+        course: c.course, records: c.records, scan: c.scan, catalogs: undefined,
+        updates: await updates.getState() }) };
     }
+    case "check-updates": return { ok: true, updates: await updates.check(message.manual === true) };
+    case "download-update": return { ok: true, updates: await updates.download() };
     case "scan": return startScan(message.tabId, false);
     case "sync-source": return syncSource(message.tabId);
     case "retry-scan": return startScan(message.tabId || (await state()).course?.tabId, true);
@@ -462,3 +469,4 @@ chrome.runtime.onMessage.addListener((message, sender, respond) => {
   handle(message, sender).then(respond).catch((error) => respond({ ok: false, error: error.message }));
   return true;
 });
+void updates.start().catch(console.error);

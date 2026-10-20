@@ -137,12 +137,35 @@ Already-submitted download tasks from earlier courses remain independent and
 retain their original course folders. No video download is triggered by a course
 switch or by automatic scanning.
 
+## Release Updates
+
+`updates.js` checks the fixed public GitHub repository's latest stable release.
+Update state uses `classReplayUpdates`, separate from the video queue. Automatic
+checks run at installation, startup, manager opening and a six-hour alarm, with
+a persistent six-hour cache, one-hour failure backoff, a one-minute manual-check
+cooldown and GitHub rate-limit backoff. Requests omit credentials and referrers
+and never include classroom data. Network failures do not stop the download queue.
+
+Version comparison is numeric, ignores drafts/prereleases, and never offers a
+downgrade. Only an uploaded, nonempty `cumt-class-replay-downloader-vVERSION.zip`
+asset with an exact HTTPS download URL in this repository is accepted.
+Clicking Download starts a normal Edge ZIP download outside the video queue;
+it does not install or run code. Users replace the original unpacked folder,
+reload the extension, and refresh classroom tabs. Runtime manifest versions
+are also used for floating-panel health checks.
+
+Build a release archive with `node scripts/package-release.cjs`; output is in
+the ignored `dist/` directory. The archive contains only an explicit allowlist
+of extension runtime files, vendor license and the user README. The build verifies
+local script references before writing it. Future releases must keep the package
+filename contract and publish a stable `vVERSION` GitHub Release with that ZIP.
+
 ## Verification
 
 Unit tests need Node.js but no npm install:
 
 ```powershell
-node --test tests/core.test.js tests/background.test.js tests/page-bridge.test.js
+node --test tests/core.test.js tests/background.test.js tests/page-bridge.test.js tests/updates.test.js tests/popup-updates.test.js tests/package.test.js
 ```
 
 All 36 tests passed on 2026-10-18, including embedded source binding, concurrent

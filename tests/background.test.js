@@ -4,6 +4,8 @@ const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 const core = require("../core.js");
+const updates = require("../updates.js");
+const manifest = require("../manifest.json");
 const root = path.resolve(__dirname, "..");
 function harness(persisted) {
   const listeners = {};
@@ -66,10 +68,12 @@ function harness(persisted) {
     },
     tabs: { async query() { return []; }, async create() {} },
     action: { onClicked: event("click") },
-    runtime: { id: "test", getURL: p => `chrome-extension://test/${p}`,
+    runtime: { id: "test", getURL: p => `chrome-extension://test/${p}`, getManifest: () => manifest,
       onMessage: event("message"), onStartup: event("startup"), onInstalled: event("installed") },
   };
-  const context = vm.createContext({ chrome, console, ReplayCore: core, crypto: require("node:crypto").webcrypto,
+  const context = vm.createContext({ chrome, console, ReplayCore: core,
+    ReplayUpdates: { create: chrome => updates.create(chrome, { fetch: async () => ({ status: 404 }) }) },
+    crypto: require("node:crypto").webcrypto,
     structuredClone, Date, URL, setTimeout, clearTimeout, importScripts() {}, classReplayPage() {} });
   vm.runInContext(fs.readFileSync(path.join(root, "background.js"), "utf8"), context);
   const request = (type, args = {}, senderOverride) => new Promise((resolve) => {

@@ -1,6 +1,6 @@
 (() => {
   const KEY = "__classReplayFloatingPanel";
-  const VERSION = "2.2.2";
+  const VERSION = chrome.runtime.getManifest().version;
   if (globalThis[KEY]?.version === VERSION) return;
   globalThis[KEY]?.dispose();
   document.getElementById("class-replay-downloader-root")?.remove();

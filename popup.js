@@ -17,6 +17,8 @@ let recordSignature = "";
 let taskSignature = "";
 let refreshing = false;
 let noticeTimer;
+let checkingUpdate = false;
+let downloadingUpdate = false;
 
 function icons() { globalThis.lucide?.createIcons(); }
 function notice(text, error = false) {
@@ -195,6 +197,23 @@ function renderTasks() {
   $("tasks").replaceChildren(fragment);
   icons();
 }
+function renderUpdates() {
+  const update = data.updates || {};
+  const checking = checkingUpdate || update.checking;
+  $("current-version").textContent = `v${update.currentVersion || chrome.runtime.getManifest().version}`;
+  $("check-updates").disabled = Boolean(checking);
+  $("check-updates").querySelector("span").textContent = checking ? "检查中" : "检查更新";
+  $("update-banner").hidden = !update.available;
+  $("update-title").textContent = update.available ? `发现新版本 v${update.latestVersion}` : "";
+  $("download-update").disabled = downloadingUpdate || !update.downloadUrl;
+  $("update-status").textContent = checking ? "正在检查更新"
+    : update.error || (update.available ? "有新版本可用"
+    : update.noRelease ? "暂无已发布版本"
+    : update.checkedAt ? "已是最新版本" : "尚未检查更新");
+  $("update-status").className = update.error ? "error" : "";
+  $("update-status").title = update.checkedAt
+    ? `最近成功检查：${new Date(update.checkedAt).toLocaleString("zh-CN")}` : "";
+}
 function render() {
   const scan = data.scan, running = scan?.status === "running";
   const fresh = freshSource();
@@ -227,7 +246,7 @@ function render() {
     $("week-filter").value = weeks.includes(value) ? value : "";
     $("week-filter").dataset.weeks = JSON.stringify(weeks);
   }
-  renderRecords(); renderTasks(); icons();
+  renderRecords(); renderTasks(); renderUpdates(); icons();
 }
 async function refresh() {
   if (refreshing) return;
@@ -307,6 +326,23 @@ $("concurrency").addEventListener("change", async () => {
 });
 $("download-settings").addEventListener("click", () => chrome.tabs.create({ url: "edge://settings/downloads" }));
 $("browser-downloads").addEventListener("click", () => chrome.tabs.create({ url: "edge://downloads" }));
+$("check-updates").addEventListener("click", async () => {
+  checkingUpdate = true; renderUpdates();
+  try { data.updates = (await request("check-updates", { manual: true })).updates; }
+  catch (error) { notice(error.message, true); }
+  finally { checkingUpdate = false; renderUpdates(); }
+});
+$("download-update").addEventListener("click", async () => {
+  downloadingUpdate = true; renderUpdates();
+  try {
+    data.updates = (await request("download-update")).updates;
+    notice("新版已交给 Edge 下载。完成后请解压并覆盖原插件文件夹，再到扩展管理页重新加载。");
+  } catch (error) { notice(error.message, true); }
+  finally { downloadingUpdate = false; renderUpdates(); }
+});
+$("release-notes").addEventListener("click", () => {
+  if (data.updates?.releaseUrl) void chrome.tabs.create({ url: data.updates.releaseUrl });
+});
 function closePanel() {
   const origin = location.ancestorOrigins?.[0];
   if (!embedded || !/^https?:\/\/class\.cumt\.edu\.cn$/.test(origin || "")) return;
@@ -339,6 +375,9 @@ async function init() {
   prefs = (await chrome.storage.local.get(PREFS_KEY))[PREFS_KEY] || prefs;
   for (const view of ["courseware", "teacher"]) $(`view-${view}`).checked = prefs.views.includes(view);
   await refresh(); icons();
+  void request("check-updates").then(result => {
+    data.updates = result.updates; renderUpdates();
+  }).catch(error => notice(error.message, true));
   setInterval(() => { if (!document.hidden) void refresh(); }, 1500);
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) { sourceState = { status: "checking" }; render(); void refresh(); }

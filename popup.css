@@ -80,6 +80,13 @@ tbody tr:hover { background: #fafcfb; }
 .task .task-error { color: #b53d4b; }
 #notice { position: sticky; bottom: 12px; background: #203c38; color: white; border-radius: 5px; font-size: 13px; line-height: 1.5; padding: 10px 15px; margin-top: 16px; overflow-wrap: anywhere; }
 #notice:empty { display: none; }
+.update-banner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid #dbe2e0; }
+.update-banner strong { color: #14786c; font-size: 14px; overflow-wrap: anywhere; }
+.update-actions { display: flex; align-items: center; gap: 8px; }
+.update-footer { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 16px; padding-top: 16px; margin-top: 24px; border-top: 1px solid #dbe2e0; color: #687572; font-size: 12px; }
+.update-footer #current-version { white-space: nowrap; }
+.update-footer #update-status { flex: 1; min-width: 120px; overflow-wrap: anywhere; }
+.update-footer button { font-size: 12px; }
 .embedded .app-header { position: sticky; top: 0; z-index: 3; padding: 12px 16px; gap: 10px; }
 .embedded body { min-width: 0; }
 .embedded .app-header > div { gap: 8px; }

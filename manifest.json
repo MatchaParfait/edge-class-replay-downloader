@@ -1,11 +1,11 @@
 {
   "manifest_version": 3,
   "name": "CUMT课堂回放批量下载",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "description": "用于中国矿业大学云课堂，支持课件与教师视角选择，批量下载当前账户有权访问的课堂回放。",
   "minimum_chrome_version": "120",
   "permissions": ["activeTab", "downloads", "storage", "scripting", "alarms"],
-  "host_permissions": ["http://class.cumt.edu.cn/*", "https://class.cumt.edu.cn/*"],
+  "host_permissions": ["http://class.cumt.edu.cn/*", "https://class.cumt.edu.cn/*", "https://api.github.com/*"],
   "background": {
     "service_worker": "background.js"
   },
